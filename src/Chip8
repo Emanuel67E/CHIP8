@@ -1,0 +1,94 @@
+// Chip8 emulation
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
+#include <vector>
+
+uint8_t pow(uint8_t x, uint8_t y) {
+  uint8_t res = 1;
+  for(uint8_t i=0; i<y; ++i) {
+    res = res*x;
+  }
+  return res;
+}
+
+class Chip8 {
+private:
+  std::vector<uint8_t> memory;
+  // RAM memory
+  // 4096 bytes
+
+  std::vector<uint8_t> V;
+  // General purpose registers
+  // V0 to VF
+
+  std::vector<uint16_t> stack;
+  // 16 16-bit values
+
+  uint8_t ST; // Sound timer
+  uint8_t DT; // Delay timer
+  uint8_t SP; // Stack pointer
+  uint16_t PC; // Program counter
+  uint16_t I; // Register I
+  // Special registers
+
+public:
+  Chip8 () {
+    memory.resize(4096, 0);
+    V.resize(16, 0);
+    stack.resize(16, 0);
+    ST = 0;
+    DT = 0;
+    SP = 0;
+    PC = 0;
+    I = 0;
+  }
+  void Decode (uint16_t);
+};
+
+void Chip8::Decode(uint16_t opcode) {
+  uint8_t n1 = (0xF000 & opcode) >> 12;
+
+  switch(n1) {
+    case 0x0: {
+      uint8_t n4 = (0x000F & opcode);
+      if(n4 == 0x0) {
+        printf("Clear Display\n");
+      }
+      else if(n4 == 0xE) {
+        //Return from subroutine
+      }
+      break;
+    }
+    case 0x1: {
+      uint16_t nnn = (0x0FFF & opcode);
+      PC = nnn;
+      break;
+    }
+    case 0x6: {
+      uint8_t x = (0x0F00 & opcode) >> 8;
+      uint8_t kk = (0x00FF & opcode);
+      V[x] = kk;
+      break;
+    }
+    case 0xA: {
+      uint16_t nnn = (0x0FFF & opcode);
+      I = nnn;
+      break;
+    }
+    case 0xD: {// Dxyn
+      uint8_t x = (0x0F00 & opcode) >> 8;
+      uint8_t y = (0x00F0 & opcode) >> 4;
+      uint8_t n = (0x000F & opcode);
+      break;
+    }
+  }
+}
+
+int main() {
+
+  printf("All good!\n");
+
+  return 0;
+}
