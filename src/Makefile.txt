@@ -1,0 +1,7 @@
+all:
+  g++ -Isrc/include -Lsrc/lib -o main main.cpp -lmingw32 -lSDL2main -lSDL2 Chip8.cpp
+
+//
+// I think this is supposed to work if cmake is installed
+// I am just copying this command to the console
+//
